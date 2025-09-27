@@ -1,11 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GlassIcon from '../assets/glass-icon.svg';
 import MLogo from '../assets/m-logo.svg';
 import './meter.css';
 
 const PerformeterMeter = () => {
   const [activeCategory, setActiveCategory] = useState('trendy');
-  const [overallScore, setOverallScore] = useState(67);
+  const [overallScore, setOverallScore] = useState(0);
+  const [extractedImages, setExtractedImages] = useState([]);
+  const [geminiAnalysis, setGeminiAnalysis] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Listen for messages from content script
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data.type === 'DATA_UPDATE') {
+        setExtractedImages(event.data.extractedImages || []);
+      } else if (event.data.type === 'GEMINI_ANALYSIS') {
+        setGeminiAnalysis(event.data.analysis);
+        setIsAnalyzing(false);
+        // Parse the JSON response and update scores
+        try {
+          const analysisData = JSON.parse(event.data.analysis);
+          if (analysisData.overall_score) {
+            setOverallScore(analysisData.overall_score);
+          }
+        } catch (error) {
+          console.log('Could not parse Gemini analysis as JSON');
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    // Request initial data
+    window.parent.postMessage({ type: 'REQUEST_DATA' }, '*');
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   const categories = {
     trendy: {
@@ -71,8 +104,8 @@ const PerformeterMeter = () => {
   const progressPercentage = (currentCategory.score / 100) * 100;
 
   return (
-    <div className="performeter-meter">
-      {/* Left Sidebar - Progress Bar */}
+    <>
+      {/* Left Meter - Progress Bar */}
       <div className="meter-sidebar">
         <div className="progress-bar">
           <div 
@@ -87,8 +120,8 @@ const PerformeterMeter = () => {
         </div>
       </div>
 
-      {/* Main Performeter Section */}
-      <div className="meter-main">
+      {/* Right Sidebar Panel - Main Content */}
+      <div className="sidebar-panel">
         <div className="performeter-header">
           <h2 className="performeter-title">performeter</h2>
           <img 
@@ -101,6 +134,28 @@ const PerformeterMeter = () => {
         <div className="overall-score">
           {overallScore}
         </div>
+
+        {/* Image Counter */}
+        <div className="image-counter">
+          <span>{extractedImages.length} photos captured</span>
+        </div>
+
+        {/* Gemini Analysis Display */}
+        {geminiAnalysis && (
+          <div className="gemini-analysis">
+            <h4>AI Analysis:</h4>
+            <div className="analysis-content">
+              {geminiAnalysis}
+            </div>
+          </div>
+        )}
+
+        {/* Analysis Status */}
+        {isAnalyzing && (
+          <div className="analyzing-status">
+            <span>🤖 Analyzing profile...</span>
+          </div>
+        )}
 
         <div className="category-breakdown">
           <h3>category breakdown</h3>
@@ -126,7 +181,7 @@ const PerformeterMeter = () => {
           </ul>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

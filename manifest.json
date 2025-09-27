@@ -33,7 +33,7 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["sidebar/dist/*", "gemini-prompt.txt"],
+      "resources": ["sidebar/dist/*", "gemini-prompt.txt", "images/labubu.png", "images/performeter.png"],
       "matches": ["*://*.tinder.com/*"]
     }
   ]
