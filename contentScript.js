@@ -1,5 +1,5 @@
-// Safer Tinder scraper - won't break the page
-console.log('🚀 Safe Tinder Extractor Started');
+// Tinder Profile Photo Extractor with Gemini Analysis
+console.log('🚀 Tinder Extractor Started');
 
 // Check if we're on Tinder
 if (window.location.hostname.includes('tinder.com')) {
@@ -21,43 +21,17 @@ if (window.location.hostname.includes('tinder.com')) {
     // Add a small delay to let Tinder finish loading
     setTimeout(() => {
       startExtraction();
-    }, 2000);
+    }, 3000);
   });
   
   function startExtraction() {
-    console.log('🔍 Starting safe extraction...');
-    
-    // Create minimal sidebar
-    const sidebar = document.createElement('div');
-    sidebar.id = 'safe-extractor';
-    sidebar.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background: rgba(0,0,0,0.8);
-      color: #0f0;
-      font-family: monospace;
-      font-size: 10px;
-      padding: 10px;
-      z-index: 9999;
-      overflow-y: auto;
-      border-radius: 5px;
-      border: 1px solid #0f0;
-    `;
-    
-    document.body.appendChild(sidebar);
+    console.log('🔍 Starting extraction...');
     
     function log(message) {
-      const div = document.createElement('div');
-      div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-      sidebar.appendChild(div);
-      console.log(message);
-      sidebar.scrollTop = sidebar.scrollHeight;
+      console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
     }
     
-    log('✅ Safe extractor active');
+    log('✅ Extractor active');
     
     // Manual Tinder carousel extractor - captures active profile photo on each click
     let extractedProfileImages = [];
@@ -65,8 +39,6 @@ if (window.location.hostname.includes('tinder.com')) {
     let isWaitingForNextImage = false;
     
     function extractActiveProfilePhoto() {
-      log(`🔍 Looking for active profile photo at carousel position ${carouselPosition}...`);
-      
       const allElements = document.querySelectorAll('*');
       let activeProfilePhoto = null;
       
@@ -108,25 +80,27 @@ if (window.location.hostname.includes('tinder.com')) {
         );
         
         if (!isDuplicate) {
+          // Check if this is a new person (same profile photo number but different URL)
+          const sameProfileNumber = extractedProfileImages.some(existing => 
+            existing.ariaLabel === activeProfilePhoto.ariaLabel && 
+            existing.url !== activeProfilePhoto.url
+          );
+          
+          if (sameProfileNumber) {
+            // New person detected - clear all stored images
+            log(`🔄 New person detected (${activeProfilePhoto.ariaLabel}) - clearing previous images`);
+            extractedProfileImages = [];
+          }
+          
           extractedProfileImages.push(activeProfilePhoto);
           
-          log(`📸 FOUND active profile photo at position ${carouselPosition}:`);
-          log(`  URL: ${activeProfilePhoto.url}`);
-          log(`  Aria: "${activeProfilePhoto.ariaLabel}"`);
-          log(`  Position: ${carouselPosition}`);
-          log(`  Size: ${activeProfilePhoto.dimensions.width}x${activeProfilePhoto.dimensions.height}`);
-          
-          // Log to console for easy copying
+          log(`📸 Logged photo at: ${activeProfilePhoto.url}`);
           console.log('🎯 ACTIVE PROFILE PHOTO COLLECTION:', extractedProfileImages);
-        } else {
-          log(`⚠️ Profile photo at position ${carouselPosition} already stored`);
         }
-      } else {
-        log(`❌ No active profile photo found at position ${carouselPosition}`);
       }
       
-      // Update download button
-      updateDownloadButton();
+      // Update Gemini button
+      updateGeminiButton();
     }
     
     // Detect clicks on the page (indicating carousel navigation)
@@ -135,61 +109,20 @@ if (window.location.hostname.includes('tinder.com')) {
         // Check if click is on or near the Next Photo button
         const nextButton = document.querySelector('button[aria-label="Next Photo"]');
         if (nextButton && (event.target === nextButton || nextButton.contains(event.target))) {
-          log('👆 Next Photo button clicked - waiting for new image...');
           carouselPosition++;
           isWaitingForNextImage = true;
           
-          // Wait for the carousel to load the new image, then extract active profile photo
-          setTimeout(() => {
-            extractActiveProfilePhoto();
-            isWaitingForNextImage = false;
-          }, 1500); // Wait 1.5 seconds for image to load
+          // Extract active profile photo immediately
+          extractActiveProfilePhoto();
+          isWaitingForNextImage = false;
         }
       });
-      
-      log('👆 Click detection active - click Next Photo to capture active profile photo');
     }
     
-    function updateDownloadButton() {
-      // Remove existing buttons if they exist
-      const existingDownloadBtn = document.getElementById('download-profile-images');
+    function updateGeminiButton() {
+      // Remove existing button if it exists
       const existingGeminiBtn = document.getElementById('send-to-gemini');
-      if (existingDownloadBtn) existingDownloadBtn.remove();
       if (existingGeminiBtn) existingGeminiBtn.remove();
-      
-      // Create download button
-      const downloadBtn = document.createElement('button');
-      downloadBtn.id = 'download-profile-images';
-      downloadBtn.textContent = `📥 Download ${extractedProfileImages.length} Images`;
-      downloadBtn.style.cssText = `
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 10000;
-        padding: 10px;
-        background: #0f0;
-        color: #000;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 12px;
-        margin-right: 10px;
-      `;
-      
-      downloadBtn.onclick = () => {
-        const dataStr = JSON.stringify(extractedProfileImages, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tinder_profile_images_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        log('📥 Profile images downloaded!');
-      };
       
       // Create Gemini button
       const geminiBtn = document.createElement('button');
@@ -198,7 +131,7 @@ if (window.location.hostname.includes('tinder.com')) {
       geminiBtn.style.cssText = `
         position: fixed;
         top: 10px;
-        left: 200px;
+        left: 10px;
         z-index: 10000;
         padding: 10px;
         background: #4285f4;
@@ -208,14 +141,12 @@ if (window.location.hostname.includes('tinder.com')) {
         cursor: pointer;
         font-weight: bold;
         font-size: 12px;
-        margin-right: 10px;
       `;
       
       geminiBtn.onclick = () => {
         sendToGemini();
       };
       
-      document.body.appendChild(downloadBtn);
       document.body.appendChild(geminiBtn);
     }
     
@@ -228,19 +159,16 @@ if (window.location.hostname.includes('tinder.com')) {
       log('🤖 Sending images to Gemini...');
       
       // Use hardcoded API key
-      const apiKey = 'AIzaSyCttLcS-zUTDEPc1fAHsDE7uoJg3YTazoI'; // Replace with your actual API key
-      log('✅ Using API key');
+      const apiKey = 'AIzaSyCttLcS-zUTDEPc1fAHsDE7uoJg3YTazoI';
       
-      // Get custom prompt from user
-      const customPrompt = prompt('Enter your prompt for Gemini (or press Enter for default):', 
-        'Analyze these Tinder profile photos and provide insights about the person\'s appearance, style, and overall presentation. Be detailed and specific.');
-      
-      if (customPrompt === null) {
-        log('❌ Prompt cancelled');
-        return;
+      // Load prompt from file
+      let geminiPrompt;
+      try {
+        const response = await fetch(chrome.runtime.getURL('gemini-prompt.txt'));
+        geminiPrompt = await response.text();
+      } catch (error) {
+        geminiPrompt = 'Analyze these Tinder profile photos and provide insights about the person\'s appearance, style, and overall presentation. Be detailed and specific.';
       }
-      
-      const geminiPrompt = customPrompt || 'Analyze these Tinder profile photos and provide insights about the person\'s appearance, style, and overall presentation. Be detailed and specific.';
       
       try {
         // Prepare the request
@@ -286,20 +214,12 @@ if (window.location.hostname.includes('tinder.com')) {
         
         const result = await response.json();
         
-        // Log the full response for debugging
-        console.log('🔍 Full Gemini response:', result);
-        log('🔍 Full response logged to console');
-        
         if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts[0]) {
           const analysis = result.candidates[0].content.parts[0].text;
-          log('✅ Gemini analysis received:');
-          log('📝 ' + analysis);
-          
-          // Also log to console for easy copying
+          log('✅ Gemini response received');
           console.log('🤖 GEMINI ANALYSIS:', analysis);
         } else {
           log('❌ Unexpected response format from Gemini');
-          log('Response structure: ' + JSON.stringify(result, null, 2));
           console.log('Gemini response:', result);
         }
         
@@ -334,11 +254,6 @@ if (window.location.hostname.includes('tinder.com')) {
     
     // Manual extraction function
     function lightExtraction() {
-      log('🔍 Active Profile Photo extractor active');
-      log('🎯 Looking for whatever profile photo is currently active/visible');
-      log('👆 Click Next Photo button to capture the active profile photo from each position');
-      log('📊 Current stored images: ' + extractedProfileImages.length);
-      
       // Set up click detection
       setupClickDetection();
       
@@ -357,8 +272,7 @@ if (window.location.hostname.includes('tinder.com')) {
     const observer = new MutationObserver(() => {
       changeCount++;
       if (changeCount % 10 === 0) { // Only log every 10th change
-        log(`🔄 Changes detected: ${changeCount}`);
-        setTimeout(lightExtraction, 2000);
+        lightExtraction();
       }
     });
     
