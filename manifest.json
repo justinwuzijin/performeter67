@@ -10,7 +10,8 @@
   ],
   
   "host_permissions": [
-    "*://*.tinder.com/*"
+    "*://*.tinder.com/*",
+    "*://images-ssl.gotinder.com/*"
   ],
   
   "background": {

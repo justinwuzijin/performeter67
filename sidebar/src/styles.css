@@ -57,71 +57,308 @@ body {
   overflow-y: auto;
 }
 
-.placeholder-content {
+/* Extraction controls */
+.extraction-controls {
+  margin-bottom: 20px;
+}
+
+.extract-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #4CAF50;
+  color: white;
+}
+
+.extract-button:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.extract-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Stats section */
+.stats-section {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-.placeholder-box {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.placeholder-box h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-.placeholder-box p {
-  margin-bottom: 8px;
-  opacity: 0.9;
-  font-size: 14px;
-}
-
-.feature-list {
+.stat-item {
+  flex: 1;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.feature-list h4 {
-  font-size: 16px;
-  margin-bottom: 12px;
+.stat-number {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
   color: #fff;
 }
 
-.feature-list ul {
-  list-style: none;
-  padding: 0;
+.stat-label {
+  font-size: 12px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.feature-list li {
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* Current profile */
+.current-profile {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.current-profile h3 {
+  margin: 0 0 15px 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.profile-preview {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.current-images {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.current-images img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.more-images {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-info p {
+  margin: 2px 0;
   font-size: 14px;
   opacity: 0.9;
-  position: relative;
-  padding-left: 20px;
 }
 
-.feature-list li:before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: #4CAF50;
-  font-weight: bold;
+.bio-preview {
+  font-size: 12px;
+  opacity: 0.7;
+  font-style: italic;
 }
 
-.feature-list li:last-child {
-  border-bottom: none;
+/* Stored profiles */
+.stored-profiles {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profiles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.profiles-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: transparent;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profiles-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.profile-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 5px;
+}
+
+.profile-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-item.selected {
+  background: rgba(76, 175, 80, 0.3);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.profile-checkbox {
+  flex-shrink: 0;
+}
+
+.profile-checkbox input {
+  margin: 0;
+}
+
+.profile-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.profile-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-details p {
+  margin: 2px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.profile-meta {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* Export section */
+.export-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.export-section h3 {
+  margin: 0 0 15px 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.export-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #2196F3;
+  color: white;
+}
+
+.export-button:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+}
+
+.api-button {
+  background: #FF9800;
+}
+
+.api-button:hover {
+  background: #F57C00;
+}
+
+/* Data actions */
+.data-actions {
+  margin-bottom: 20px;
+}
+
+.clear-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f44336;
+  color: white;
+}
+
+.clear-button:hover {
+  background: #da190b;
+  transform: translateY(-1px);
 }
 
 /* Footer */
@@ -162,7 +399,17 @@ body {
     font-size: 20px;
   }
   
-  .placeholder-box, .feature-list {
-    padding: 15px;
+  .stats-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .profile-preview {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .current-images {
+    justify-content: center;
   }
 }

@@ -18,5 +18,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({tab: tabs[0]});
     });
     return true; // Keep message channel open for async response
+  } else if (request.action === 'fetchImage') {
+    // Fetch image from background script (has different CORS permissions)
+    fetch(request.url)
+      .then(response => response.blob())
+      .then(blob => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64 = reader.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+            resolve(base64);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      })
+      .then(base64 => {
+        sendResponse({ base64: base64 });
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+        sendResponse({ error: error.message });
+      });
+    
+    // Return true to indicate we will send a response asynchronously
+    return true;
   }
 });
