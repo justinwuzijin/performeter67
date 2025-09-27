@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Performative Meter",
+  "version": "1.0.0",
+  "description": "A Chrome extension that adds a sidebar to Tinder for performance tracking",
+  
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  
+  "host_permissions": [
+    "*://*.tinder.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["*://*.tinder.com/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_end"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Performative Meter"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar/dist/*"],
+      "matches": ["*://*.tinder.com/*"]
+    }
+  ]
+}
