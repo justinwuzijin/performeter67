@@ -127,8 +127,16 @@ if (window.location.hostname.includes('tinder.com')) {
       sidebarContainer.appendChild(sidebarIframe);
       
       // Debug: Check if iframes are loading
-      meterIframe.onload = () => console.log('✅ Meter iframe loaded');
-      sidebarIframe.onload = () => console.log('✅ Sidebar iframe loaded');
+      meterIframe.onload = () => {
+        console.log('✅ Meter iframe loaded');
+        // Send initial update once iframe is ready
+        setTimeout(() => updateReactApp(), 500);
+      };
+      sidebarIframe.onload = () => {
+        console.log('✅ Sidebar iframe loaded');
+        // Send initial update once iframe is ready
+        setTimeout(() => updateReactApp(), 500);
+      };
       
       meterIframe.onerror = () => console.error('❌ Meter iframe failed to load');
       sidebarIframe.onerror = () => console.error('❌ Sidebar iframe failed to load');
@@ -249,16 +257,24 @@ if (window.location.hostname.includes('tinder.com')) {
         isAnalyzing: isAnalyzing
       };
 
+      log(`📊 Updating UI: ${updateData.imageCount} images, score: ${updateData.overallScore}`);
+
       // Send message to meter iframe
       const meterIframe = document.querySelector('#meter-container iframe');
       if (meterIframe && meterIframe.contentWindow) {
         meterIframe.contentWindow.postMessage(updateData, '*');
+        log('📤 Sent update to meter iframe');
+      } else {
+        log('⚠️ Meter iframe not found or not ready');
       }
 
       // Send message to sidebar iframe
       const sidebarIframe = document.querySelector('#sidebar-container iframe');
       if (sidebarIframe && sidebarIframe.contentWindow) {
         sidebarIframe.contentWindow.postMessage(updateData, '*');
+        log('📤 Sent update to sidebar iframe');
+      } else {
+        log('⚠️ Sidebar iframe not found or not ready');
       }
     }
     
@@ -334,15 +350,80 @@ if (window.location.hostname.includes('tinder.com')) {
     // Detect clicks on the page (indicating carousel navigation)
     function setupClickDetection() {
       document.addEventListener('click', (event) => {
-        // Check if click is on or near the Next Photo button
-        const nextButton = document.querySelector('button[aria-label="Next Photo"]');
-        if (nextButton && (event.target === nextButton || nextButton.contains(event.target))) {
-          carouselPosition++;
-          isWaitingForNextImage = true;
+        log(`🖱️ Click detected on: ${event.target.tagName} - ${event.target.className || 'no class'}`);
+        
+        // Check multiple possible selectors for the Next Photo button
+        const nextButtonSelectors = [
+          'button[aria-label="Next Photo"]',
+          'button[aria-label*="Next"]',
+          'button[title*="Next"]',
+          '[role="button"][aria-label*="Next"]'
+        ];
+        
+        let nextButton = null;
+        for (const selector of nextButtonSelectors) {
+          nextButton = document.querySelector(selector);
+          if (nextButton) {
+            log(`🔍 Next Photo button found with selector: ${selector}`);
+            break;
+          }
+        }
+        
+        if (nextButton) {
+          log(`🎯 Next button aria-label: "${nextButton.getAttribute('aria-label')}"`);
+          log(`🎯 Click target: ${event.target.tagName}, Next button contains target: ${nextButton.contains(event.target)}`);
           
-          // Extract active profile photo immediately
-          extractActiveProfilePhoto();
-          isWaitingForNextImage = false;
+          // Check if the clicked element is the button itself or any of its children
+          let isClickOnButton = false;
+          let currentElement = event.target;
+          
+          // Walk up the DOM tree to see if we're inside the button
+          let depth = 0;
+          while (currentElement && currentElement !== document.body && depth < 10) {
+            log(`🔍 Walking up DOM: depth ${depth}, element: ${currentElement.tagName}, class: ${currentElement.className || 'no class'}`);
+            if (currentElement === nextButton) {
+              isClickOnButton = true;
+              log(`✅ Found button at depth ${depth}`);
+              break;
+            }
+            currentElement = currentElement.parentElement;
+            depth++;
+          }
+          
+          log(`🎯 Is click on button (walking up DOM): ${isClickOnButton}`);
+          
+          // Also check if the button is near the click coordinates
+          const rect = nextButton.getBoundingClientRect();
+          const clickX = event.clientX;
+          const clickY = event.clientY;
+          const isNearButton = clickX >= rect.left && clickX <= rect.right && 
+                              clickY >= rect.top && clickY <= rect.bottom;
+          
+          log(`🎯 Click coordinates: (${clickX}, ${clickY}), Button rect: (${rect.left}, ${rect.top}, ${rect.right}, ${rect.bottom})`);
+          log(`🎯 Is click near button: ${isNearButton}`);
+          
+          // Check if click is on profile photo area (common way to navigate photos)
+          const profilePhotoDiv = event.target.closest('div[aria-label*="Profile Photo"]');
+          const isClickOnProfilePhoto = profilePhotoDiv && profilePhotoDiv.getAttribute('aria-label') !== 'Profile Photo';
+          
+          log(`🎯 Is click on profile photo: ${isClickOnProfilePhoto}`);
+          if (isClickOnProfilePhoto) {
+            log(`🎯 Profile photo aria-label: "${profilePhotoDiv.getAttribute('aria-label')}"`);
+          }
+          
+          if (event.target === nextButton || nextButton.contains(event.target) || isClickOnButton || isNearButton || isClickOnProfilePhoto) {
+            log('🖱️ Next Photo action detected - starting immediate image extraction...');
+            carouselPosition++;
+            isWaitingForNextImage = true;
+            
+            // Extract active profile photo immediately
+            extractActiveProfilePhoto();
+            isWaitingForNextImage = false;
+          } else {
+            log('❌ Click was not on Next Photo button or profile photo');
+          }
+        } else {
+          log('❌ No Next Photo button found with any selector');
         }
       });
     }
@@ -464,15 +545,15 @@ if (window.location.hostname.includes('tinder.com')) {
     
     // Manual extraction function
     function lightExtraction() {
-      // Set up click detection
-      setupClickDetection();
-      
       // Extract active profile photo from current position
       extractActiveProfilePhoto();
     }
     
     // Create the sidebar
     createSidebarContainer();
+    
+    // Set up click detection once
+    setupClickDetection();
     
     // Run light extraction
     lightExtraction();
