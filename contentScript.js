@@ -63,11 +63,11 @@ if (window.location.hostname.includes('tinder.com')) {
       meterContainer.id = 'meter-container';
       meterContainer.style.cssText = `
         position: fixed;
-        left: 0;
+        left: 30%;
         top: 50%;
         transform: translateY(-50%);
-        width: 60px;
-        height: 400px;
+        width: 5%;
+        height: 60%;
         z-index: 10000;
         pointer-events: auto;
       `;
