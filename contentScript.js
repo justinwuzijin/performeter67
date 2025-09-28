@@ -144,10 +144,12 @@ if (window.location.hostname.includes('tinder.com')) {
     }
     
     function extractActiveProfilePhoto() {
-      const allElements = document.querySelectorAll('*');
+      // Target the specific div structure for Tinder profile photos
+      // Look for divs with the specific class pattern and aria-label containing "Profile Photo"
+      const profilePhotoDivs = document.querySelectorAll('div[aria-label*="Profile Photo"]');
       let activeProfilePhoto = null;
       
-      allElements.forEach((el) => {
+      profilePhotoDivs.forEach((el) => {
         const style = window.getComputedStyle(el);
         const bgImage = style.backgroundImage;
         
