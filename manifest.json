@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Performative Meter",
+  "name": "performeter67",
   "version": "1.0.0",
-  "description": "A Chrome extension that adds a sidebar to Tinder for performance tracking",
+  "description": "tinder extension to find how performative your matches are",
   
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs"
   ],
   
   "host_permissions": [
@@ -27,13 +28,14 @@
   ],
   
   "action": {
-    "default_popup": "popup/popup.html",
     "default_title": "Performative Meter"
   },
   
+  "options_page": "settings.html",
+  
   "web_accessible_resources": [
     {
-      "resources": ["sidebar/dist/*", "gemini-prompt.txt", "images/labubu.png", "images/performeter.png"],
+      "resources": ["sidebar/dist/*", "gemini-prompt.txt", "images/labubu.png", "images/performeter.png", "settings.html", "settings.js"],
       "matches": ["*://*.tinder.com/*"]
     }
   ]

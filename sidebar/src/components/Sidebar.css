@@ -1,0 +1,242 @@
+.sidebar-container {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+.sidebar-panel {
+  width: 350px;
+  background: #4CAF50;
+  padding: 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 30px 0 0 30px;
+  overflow-y: auto;
+  font-family: 'Comic Sans MS', cursive;
+  transition: height 0.3s ease;
+}
+
+.sidebar-compact {
+  height: 320px;
+}
+
+.sidebar-expanded {
+  height: auto;
+  max-height: 80vh;
+}
+
+.performeter-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.performeter-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: white;
+}
+
+.performeter-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.overall-score {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 20px 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-counter {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  margin: 10px 0;
+  text-align: center;
+  color: white;
+}
+
+.analyze-button {
+  background: #2E7D32;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px 0;
+  transition: all 0.2s ease;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.analyze-button:hover:not(:disabled) {
+  background: #1B5E20;
+  transform: translateY(-1px);
+}
+
+.analyze-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.analyze-button.analyzing {
+  background: #FF9800;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 152, 0, 0);
+  }
+}
+
+.overall-note {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 18px;
+  border-radius: 8px;
+  margin: 10px 0;
+  width: 100%;
+  font-size: 13px;
+  line-height: 1.5;
+  color: white;
+  white-space: normal; /* Changed from pre-wrap to normal */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-height: 60px;
+  box-sizing: border-box;
+  text-align: left; /* Ensure left alignment */
+}
+
+.category-breakdown {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.category-breakdown h3 {
+  font-size: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+  color: white;
+}
+
+.category-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.category-button {
+  background: #2E7D32;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  width: 100%;
+}
+
+.category-button:hover {
+  background: #1B5E20;
+  transform: translateY(-1px);
+}
+
+.category-button.active {
+  background: #FFD700;
+  color: #2E7D32;
+  font-weight: bold;
+}
+
+.category-details {
+  margin-top: 15px;
+  padding: 18px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  min-height: 120px;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  text-align: left; /* Ensure left alignment */
+}
+
+.category-details h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: white;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.category-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-details li {
+  font-size: 13px;
+  margin-bottom: 8px;
+  padding-left: 12px;
+  position: relative;
+  color: white;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.category-details li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #FFD700;
+  font-weight: bold;
+}
+
+.gemini-analysis {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+  width: 100%;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.gemini-analysis h4 {
+  font-size: 12px;
+  margin-bottom: 8px;
+  color: #FFD700;
+}
+
+.analysis-content {
+  font-size: 10px;
+  line-height: 1.3;
+  color: white;
+  white-space: pre-wrap;
+}

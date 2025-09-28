@@ -1,0 +1,47 @@
+.meter-container {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 400px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 8px;
+  border-radius: 0 30px 30px 0;
+  box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+  pointer-events: auto;
+  z-index: 10000;
+}
+
+.progress-bar {
+  width: 40px;
+  height: 320px;
+  background: white;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+.progress-fill {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #4CAF50;
+  border-radius: 20px 20px 18px 18px;
+  transition: height 0.3s ease;
+}
+
+.progress-icon {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  line-height: 1;
+}
+
